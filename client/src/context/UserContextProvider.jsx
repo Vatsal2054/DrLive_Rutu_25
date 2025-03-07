@@ -126,6 +126,16 @@ export default function UserContextProvider({ children }) {
         return false;
     }
 
+    async function handleGetPrescriptions(){
+        const res = await axios.get("https://medicine-eekv.onrender.com/medicines/suggest/ami", );
+        console.log(res);
+        if(res.status === 200){
+            console.log("Prescriptions fetched successfully");
+            return res.data.data;
+        }
+        return false;
+    }
+
     async function handleSubmitPrescriptions(data){
         const res = await postApi("/prescription/", data);
         console.log(res);

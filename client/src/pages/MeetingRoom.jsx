@@ -25,12 +25,16 @@ const MeetingRoom = () => {
         console.table(prescriptions);
         console.log(currentAppointment);
         
-        const res = await submitPrescriptions({
-            userId: currentAppointment,
-            prescription: prescriptions
-        });
-        if(res){
-            console.log("Prescriptions submitted successfully");
+        if(prescriptions.length !== 0){
+            const res = await submitPrescriptions({
+                userId: currentAppointment,
+                prescription: prescriptions
+            });
+            if(res){
+                console.log("Prescriptions submitted successfully");
+                navigate("/");
+            }
+        } else {
             navigate("/");
         }
     }
