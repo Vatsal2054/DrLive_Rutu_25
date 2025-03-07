@@ -33,7 +33,7 @@ function App() {
             <Route path="/appointment-history" element={<PastAppointments />} />
             <Route path="/pharmacy-near-me" element={<PharmacyPage />} />
             <Route path="/pharmacy-near-me/:placeId" element={<PharmacyDetailPage />} />
-            <Route path="/AddReport" element={<AddReport />} />
+            <Route path="/upload-report" element={<AddReport />} />
             <Route path="/GetReports" element={<GetReports />} />
             {/* <Route path="/" /> */}
           </Route>

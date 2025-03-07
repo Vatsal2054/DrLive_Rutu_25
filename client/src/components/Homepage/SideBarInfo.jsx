@@ -38,6 +38,12 @@ export const PatientNavContentInfo = [
         fillIcon: <PiStorefrontDuotone />
     },
     {
+        name: "Upload Report",
+        path: "/upload-report",
+        icon: <PiScan />,
+        fillIcon: <PiScanDuotone />
+    },
+    {
         name: "Appointment History",
         path: "/appointment-history",
         icon: <PiClockUser />,

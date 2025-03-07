@@ -318,7 +318,7 @@ const joinAppointment = async (req, res) => {
     }
 
     // Update the appointment status to "completed"
-    appointment.status = "completed";
+    appointment.status = "approved";
     await appointment.save();
     
     return res
