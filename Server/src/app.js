@@ -37,6 +37,7 @@ import doctorRouter from "./routes/doctor.routes.js";
 import appointmentRouter from "./routes/appointment.routes.js";
 import prescriptionRouter from "./routes/prescription.routes.js";
 import pharmacyRoutess from "./routes/pharmacy.routes.js"
+import reportRouter from "./routes/report.routes.js";
 
 app.use("/auth", userRouter);
 app.use("/chat", chatRouter);
@@ -44,5 +45,6 @@ app.use("/doctor", doctorRouter);
 app.use("/appointment", appointmentRouter);
 app.use("/prescription", prescriptionRouter);
 app.use("/pharmacy",pharmacyRoutess)
+app.use("/report", reportRouter);
 
 export default app;
