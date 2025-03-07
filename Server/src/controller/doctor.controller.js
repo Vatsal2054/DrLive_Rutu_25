@@ -77,63 +77,61 @@ const getDoctor = async (req, res) => {
 const getDoctorsNearUser = async (req, res) => {
   try {
     const userId = req.user?._id;
-    const maxDistanceInMeters = 3000; // 3 km in meters
-    
+    const MAX_DISTANCE_METERS = 3000; // 3 km constant
+
+    // Validate user authentication
     if (!userId) {
       throw new ApiError(401, "Unauthorized request");
     }
-    
-    const currentUser = await User.findById(userId);
-    
+
+    // Fetch user with location
+    const currentUser = await User.findById(userId).lean();
     if (!currentUser || !currentUser.geoLocation?.coordinates) {
       throw new ApiError(404, "User location information not found");
     }
-    
-    // Debug: Log user coordinates
-    console.log("User location:", currentUser.geoLocation);
-    
-    // Ensure coordinates are in the correct format [longitude, latitude]
+
+    // Validate coordinates format
+    const coordinates = currentUser.geoLocation.coordinates;
+    if (!Array.isArray(coordinates) || coordinates.length !== 2) {
+      throw new ApiError(400, "Invalid user location coordinates");
+    }
+
+    // Prepare geo query
     const userLocation = {
       type: "Point",
-      coordinates: currentUser.geoLocation.coordinates
+      coordinates: [coordinates[0], coordinates[1]], // Ensure [lng, lat] order
     };
-    
-    // Check if 2dsphere index exists on the geoLocation field
+
+    // Check geo index (optional - remove in production if not needed)
     const indexes = await User.collection.indexes();
-    const hasGeoIndex = indexes.some(index => 
-      index.key && index.key['geoLocation.coordinates'] === '2dsphere'
+    const hasGeoIndex = indexes.some(
+      (index) => index.key?.["geoLocation.coordinates"] === "2dsphere"
     );
-    
     if (!hasGeoIndex) {
-      console.error("Missing 2dsphere index on geoLocation.coordinates!");
-      // You might want to create the index here or return an error
+      console.warn(
+        "Consider adding 2dsphere index on geoLocation.coordinates for better performance"
+      );
     }
-    
+
+    // Execute geo query
     const doctors = await User.aggregate([
       {
         $geoNear: {
           near: userLocation,
           distanceField: "distance",
-          maxDistance: maxDistanceInMeters,
+          maxDistance: MAX_DISTANCE_METERS,
           spherical: true,
           query: {
             role: "doctor",
             _id: { $ne: userId },
-            // Ensure we're only getting doctors with valid coordinates
-            "geoLocation.coordinates": { 
-              $exists: true, 
+            "geoLocation.coordinates": {
+              $exists: true,
               $type: "array",
-              $ne: null
-            }
+              $ne: null,
+            },
           },
-          distanceMultiplier: 0.001, // Convert distance to kilometers
+          distanceMultiplier: 0.001, // Meters to kilometers
         },
-      },
-      // Debug: Let's see what $geoNear returns before additional filtering
-      {
-        $addFields: {
-          rawDistance: "$distance"
-        }
       },
       {
         $lookup: {
@@ -141,77 +139,56 @@ const getDoctorsNearUser = async (req, res) => {
           localField: "_id",
           foreignField: "userId",
           as: "doctorInfo",
+          pipeline: [{ $match: { isAvailable: true } }],
         },
       },
-      // Check if doctorInfo exists before unwinding
-      {
-        $match: {
-          doctorInfo: { $ne: [] }
-        }
-      },
-      {
-        $unwind: "$doctorInfo",
-      },
-      {
-        $match: {
-          "doctorInfo.isAvailable": true,
-        },
-      },
-      {
-        $addFields: {
-          distanceInKm: { $round: ["$distance", 2] },
-          fullName: { $concat: ["$firstName", " ", "$lastName"] },
-        },
-      },
+      { $unwind: { path: "$doctorInfo", preserveNullAndEmptyArrays: false } },
       {
         $project: {
           _id: 1,
-          fullName: 1,
+          firstName: 1,
+          lastName: 1,
           email: 1,
           phone: 1,
           avatar: 1,
           address: 1,
-          distanceInKm: 1,
-          rawDistance: 1, // Include raw distance for debugging
+          distanceInKm: { $round: ["$distance", 2] },
           specialization: "$doctorInfo.specialization",
           experience: "$doctorInfo.experience",
           workingPlace: "$doctorInfo.workingPlace",
         },
       },
-      {
-        $sort: { distanceInKm: 1 },
-      },
+      { $sort: { distanceInKm: 1 } },
     ]);
-    
-    // Debug output
-    console.log(`Found ${doctors.length} doctors, first few distances:`, 
-      doctors.slice(0, 3).map(d => d.distanceInKm));
-    
-    return res.status(200).json(
-      new ApiResponse(
-        200,
-        { 
-          doctors, 
-          totalDoctors: doctors.length, 
-          maxDistance: "3 km",
-          userLocation: currentUser.geoLocation 
-        },
-        `Found ${doctors.length} available doctors within 3 km of your location`
-      )
+
+    // Log results for debugging
+    console.log(
+      `Found ${doctors.length} doctors within ${MAX_DISTANCE_METERS}m`
     );
+
+    // Format response
+    return res.status(200).json({
+      success: true,
+      data: doctors,
+      count: doctors.length,
+    });
   } catch (error) {
-    console.error("Error in getDoctorsNearUser:", error);
-    return res
-      .status(error instanceof ApiError ? error.statusCode : 500)
-      .json(
-        new ApiError(
-          error instanceof ApiError ? error.statusCode : 500,
-          error.message || "Error fetching nearby doctors"
-        )
-      );
+    // Enhanced error handling
+    const statusCode = error instanceof ApiError ? error.statusCode : 500;
+    const message = error.message || "Error fetching nearby doctors";
+
+    console.error("Error in getDoctorsNearUser:", {
+      message,
+      stack: error.stack,
+      userId: req.user?._id,
+    });
+
+    return res.status(statusCode).json({
+      success: false,
+      error: new ApiError(statusCode, message),
+    });
   }
 };
-
 
 const dashboard = async (req, res) => {
   try {
