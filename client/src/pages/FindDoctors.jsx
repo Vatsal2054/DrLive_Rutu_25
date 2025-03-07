@@ -15,7 +15,7 @@ export default function FindDoctors() {
 
     async function handleGetDoctors() {
         let res = await getDoctors();
-        console.log(res);
+        console.log("1",res);
 
         if (res) {
             setDoctors(res);
