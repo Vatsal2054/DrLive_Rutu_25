@@ -12,6 +12,8 @@ import MeetingRoom from "./pages/MeetingRoom";
 import Dashboard from "./pages/Dashboard";
 import Report from "./pages/Report";
 import Prescriptions from "./pages/Prescriptions";
+import AddReport from "./pages/AddReports";
+import GetReports from "./pages/GetReports";
 
 function App() {
   return (
@@ -33,6 +35,8 @@ function App() {
           <Route path="/signup" element={<SignUp />} />
           <Route path="/signup/patient" element={<PatientSignUp />} />
           <Route path="/signup/doctor" element={<DoctorSignUp />} />
+          <Route path="/addReport" element={<AddReport />} />
+          <Route path="/GetReports" element={<GetReports />} />
         </Routes>
       </BrowserRouter>
     </>
