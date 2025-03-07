@@ -3,6 +3,8 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import Appointment from '../models/appointment.model.js';
 import User from '../models/user.model.js';
 import Doctor from '../models/doctor.model.js';
+import mongoose from "mongoose";
+
 function generateRoomId(length = 6) {
   const characters =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -16,21 +18,25 @@ const createAppointment = async (req, res) => {
   try {
     const userId = req.user._id;
     const { date, time, notes, type, doctorId } = req.body;
+    console.log("1");
+
 
     // console.log(typeof(doctorId));
     const id = new mongoose.Types.ObjectId(doctorId);
-    // console.log(id);
+    console.log(id);
     const doctor = await User.findById(id);
     // console.log(doctor);
     // Ensure correct model
     if (!doctor) {
       return res.status(400).json(new ApiError(400, "Doctor not found", false));
     }
+    console.log("2");
     // Check if the doctor has an available slot on the selected date and time
-    const doctorAvailability = await Doctor.findOne({ _id: doctorId });
+    const doctorAvailability = await Doctor.findOne({ userId: doctor._id });
     if (!doctorAvailability) {
       return res.status(400).json(new ApiError(400, "Doctor availability not found", false));
     }
+    console.log("3");
     const availabilityTimes = doctorAvailability.availableTimes; // Assuming availableTimes is an array of time ranges
     const appointmentTime = new Date(`${date} ${time}`);
     const appointmentHour = appointmentTime.getHours();
@@ -43,10 +49,12 @@ const createAppointment = async (req, res) => {
       });
       return appointmentHour + appointmentMinute / 60 >= start && appointmentHour + appointmentMinute / 60 <= end;
     });
+    console.log("4");
 
     if (!isAvailable) {
       return res.status(400).json(new ApiError(400, "Doctor is not available at the selected time", false));
     }
+    console.log("5");
 
 
     let roomId = null;
@@ -63,6 +71,7 @@ const createAppointment = async (req, res) => {
       type,
       ...(roomId && { roomId }), // Add roomId only if it's not null
     });
+    console.log("6");
 
     await appointment.save();
 
@@ -80,7 +89,7 @@ const getAllAppointments = async (req, res) => {
     const userId = req.user._id;
     const id = new mongoose.Types.ObjectId(userId);
     console.log(id);
-    
+
     const appointments = await Appointment.aggregate([
       {
         $match: {
