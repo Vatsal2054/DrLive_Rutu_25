@@ -1,35 +1,42 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { BrowserRouter, Routes, Route } from "react-router";
+import Home from "./pages/Home";
+import Login from "./pages/Login";
+import PatientSignUp from "./pages/PatientSignUp";
+import DoctorSignUp from "./pages/DoctorSignUp";
+import SignUp from "./pages/Signup";
+import Appointment from "./pages/Appointment";
+import FindDoctors from "./pages/FindDoctors";
+import Chat from "./pages/ChatBot";
+import Profile from "./pages/Profile";
+import MeetingRoom from "./pages/MeetingRoom";
+import Dashboard from "./pages/Dashboard";
+import Report from "./pages/Report";
+import Prescriptions from "./pages/Prescriptions";
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Home />}>
+            <Route path="/" element={<Dashboard />} />
+            <Route path="/appointments" element={<Appointment />} />
+            <Route path="/find-doctor" element={<FindDoctors />} />
+            <Route path="/chat" element={<Chat />} />
+            <Route path="/report" element={<Report />} />
+            <Route path="/prescriptions" element={<Prescriptions />} />
+            <Route path="/profile" element={<Profile />} />
+            {/* <Route path="/" /> */}
+          </Route>
+          <Route path="/meeting/:roomId" element={<MeetingRoom />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<SignUp />} />
+          <Route path="/signup/patient" element={<PatientSignUp />} />
+          <Route path="/signup/doctor" element={<DoctorSignUp />} />
+        </Routes>
+      </BrowserRouter>
     </>
-  )
+  );
 }
 
-export default App
+export default App;
