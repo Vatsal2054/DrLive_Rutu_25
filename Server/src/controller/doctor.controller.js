@@ -159,6 +159,8 @@ const getDoctorsNearUser = async (req, res) => {
       maxDistance: "10 km",
     };
 
+    console.log(response);
+
     return res
       .status(200)
       .json(
