@@ -26,8 +26,10 @@ const FileUpload = ({ onAnalysisComplete }) => {
       }
 
       const data = await response.json();
+      console.log(data);
       onAnalysisComplete(data);
     } catch (err) {
+      console.error(err);
       setError('Failed to analyze file. Please try again.');
     } finally {
       setIsLoading(false);
@@ -60,7 +62,7 @@ const MedicalAnalysisDashboard = ({ data }) => {
   const keyStats = [
     {
       title: "Possible Diseases",
-      value: data.possible_diseases.length.toString(),
+      value: data.possible_diseases ? data.possible_diseases.length.toString() : '0',
       color: "from-red-500 to-red-600",
       icon: (
         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -70,7 +72,7 @@ const MedicalAnalysisDashboard = ({ data }) => {
     },
     {
       title: "Severity",
-      value: data.summary.severity_assessment,
+      value: data?.summary.severity_assessment,
       color: "from-yellow-500 to-yellow-600",
       icon: (
         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
