@@ -3,6 +3,8 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import Appointment from '../models/appointment.model.js';
 import User from '../models/user.model.js';
 import Doctor from '../models/doctor.model.js';
+import mongoose from "mongoose";
+
 function generateRoomId(length = 6) {
   const characters =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -27,7 +29,7 @@ const createAppointment = async (req, res) => {
       return res.status(400).json(new ApiError(400, "Doctor not found", false));
     }
     // Check if the doctor has an available slot on the selected date and time
-    const doctorAvailability = await Doctor.findOne({ _id: doctorId });
+    const doctorAvailability = await Doctor.findOne({ userId: doctorId });
     if (!doctorAvailability) {
       return res.status(400).json(new ApiError(400, "Doctor availability not found", false));
     }
