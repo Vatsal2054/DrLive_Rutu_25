@@ -31,4 +31,16 @@ app.use(
 );
 
 
+import userRouter from "./routes/user.routes.js";
+import chatRouter from "./routes/chat.routes.js";
+import doctorRouter from "./routes/doctor.routes.js";
+import appointmentRouter from "./routes/appointment.routes.js";
+import prescriptionRouter from "./routes/prescription.routes.js";
+
+app.use("/auth", userRouter);
+app.use("/chat", chatRouter);
+app.use("/doctor", doctorRouter);
+app.use("/appointment", appointmentRouter);
+app.use("/prescription", prescriptionRouter);
+
 export default app;
