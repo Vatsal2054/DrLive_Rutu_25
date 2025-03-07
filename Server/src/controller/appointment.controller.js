@@ -1,8 +1,7 @@
+import User from "../models/user.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
-import Appointment from '../models/appointment.model.js';
-import User from '../models/user.model.js';
-import Doctor from '../models/doctor.model.js';
+import Appointment from "../models/appointment.model.js";
 import mongoose from "mongoose";
 function generateRoomId(length = 6) {
   const characters =
@@ -27,28 +26,6 @@ const createAppointment = async (req, res) => {
     if (!doctor) {
       return res.status(400).json(new ApiError(400, "Doctor not found", false));
     }
-    // Check if the doctor has an available slot on the selected date and time
-    const doctorAvailability = await Doctor.findOne({ _id: doctorId });
-    if (!doctorAvailability) {
-      return res.status(400).json(new ApiError(400, "Doctor availability not found", false));
-    }
-    const availabilityTimes = doctorAvailability.availableTimes; // Assuming availableTimes is an array of time ranges
-    const appointmentTime = new Date(`${date} ${time}`);
-    const appointmentHour = appointmentTime.getHours();
-    const appointmentMinute = appointmentTime.getMinutes();
-
-    const isAvailable = availabilityTimes.some((timeRange) => {
-      const [start, end] = timeRange.split('-').map(t => {
-        const [hour, minute] = t.split(':');
-        return parseInt(hour) + (minute === '30' ? 0.5 : 0);
-      });
-      return appointmentHour + appointmentMinute / 60 >= start && appointmentHour + appointmentMinute / 60 <= end;
-    });
-
-    if (!isAvailable) {
-      return res.status(400).json(new ApiError(400, "Doctor is not available at the selected time", false));
-    }
-
 
     let roomId = null;
     if (type === "online") {
@@ -78,12 +55,13 @@ const createAppointment = async (req, res) => {
     return res.status(500).json(new ApiError(500, "Server Error", err.message));
   }
 };
+
+// Import required models and utilities
+
 const getAllAppointments = async (req, res) => {
   try {
     const userId = req.user._id;
     const id = new mongoose.Types.ObjectId(userId);
-    console.log(id);
-    
     const appointments = await Appointment.aggregate([
       {
         $match: {

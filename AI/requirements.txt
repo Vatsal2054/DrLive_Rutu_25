@@ -1,0 +1,9 @@
+PyPDF2
+pymongo
+Flask
+flask-cors
+python-dotenv
+google-generativeai
+langchain
+langchain-google-genai
+
