@@ -77,19 +77,43 @@ const getDoctor = async (req, res) => {
 const getDoctorsNearUser = async (req, res) => {
   try {
     const userId = req.user?._id;
+    const MAX_DISTANCE_METERS = 3000; // 3 km constant
 
+    // Validate user authentication
     if (!userId) {
       throw new ApiError(401, "Unauthorized request");
     }
 
-    const currentUser = await User.findById(userId);
-
+    // Fetch user with location
+    const currentUser = await User.findById(userId).lean();
     if (!currentUser || !currentUser.geoLocation?.coordinates) {
       throw new ApiError(404, "User location information not found");
     }
 
-    const maxDistanceInMeters = 10000; // 10 km in meters
+    // Validate coordinates format
+    const coordinates = currentUser.geoLocation.coordinates;
+    if (!Array.isArray(coordinates) || coordinates.length !== 2) {
+      throw new ApiError(400, "Invalid user location coordinates");
+    }
 
+    // Prepare geo query
+    const userLocation = {
+      type: "Point",
+      coordinates: [coordinates[0], coordinates[1]], // Ensure [lng, lat] order
+    };
+
+    // Check geo index (optional - remove in production if not needed)
+    const indexes = await User.collection.indexes();
+    const hasGeoIndex = indexes.some(
+      (index) => index.key?.["geoLocation.coordinates"] === "2dsphere"
+    );
+    if (!hasGeoIndex) {
+      console.warn(
+        "Consider adding 2dsphere index on geoLocation.coordinates for better performance"
+      );
+    }
+
+    // Execute geo query
     const doctors = await User.aggregate([
       {
         $geoNear: {
@@ -101,12 +125,18 @@ const getDoctorsNearUser = async (req, res) => {
             ],
           },
           distanceField: "distance",
-          maxDistance: maxDistanceInMeters,
+          maxDistance: MAX_DISTANCE_METERS,
           spherical: true,
           query: {
             role: "doctor",
             _id: { $ne: userId },
+            "geoLocation.coordinates": {
+              $exists: true,
+              $type: "array",
+              $ne: null,
+            },
           },
+          distanceMultiplier: 0.001, // Meters to kilometers
         },
       },
       {
@@ -115,70 +145,54 @@ const getDoctorsNearUser = async (req, res) => {
           localField: "_id",
           foreignField: "userId",
           as: "doctorInfo",
+          pipeline: [{ $match: { isAvailable: true } }],
         },
       },
-      {
-        $unwind: {
-          path: "$doctorInfo",
-          preserveNullAndEmptyArrays: false,
-        },
-      },
-      {
-        $match: {
-          "doctorInfo.isAvailable": true,
-        },
-      },
-      {
-        $addFields: {
-          distanceInKm: { $round: [{ $divide: ["$distance", 1000] }, 2] },
-          fullName: { $concat: ["$firstName", " ", "$lastName"] },
-        },
-      },
+      { $unwind: { path: "$doctorInfo", preserveNullAndEmptyArrays: false } },
       {
         $project: {
           _id: 1,
-          fullName: 1,
+          firstName: 1,
+          lastName: 1,
           email: 1,
           phone: 1,
           avatar: 1,
           address: 1,
-          distanceInKm: 1,
+          distanceInKm: { $round: ["$distance", 2] },
           specialization: "$doctorInfo.specialization",
           experience: "$doctorInfo.experience",
           workingPlace: "$doctorInfo.workingPlace",
         },
       },
-      {
-        $sort: { distanceInKm: 1 },
-      },
+      { $sort: { distanceInKm: 1 } },
     ]);
 
-    const response = {
-      doctors,
-      totalDoctors: doctors.length,
-      maxDistance: "10 km",
-    };
+    // Log results for debugging
+    console.log(
+      `Found ${doctors.length} doctors within ${MAX_DISTANCE_METERS}m`
+    );
 
-    console.log(response);
-
-    return res
-      .status(200)
-      .json(
-        new ApiResponse(
-          200,
-          response,
-          `Found ${doctors.length} available doctors within 10km of your location`
-        )
-      );
+    // Format response
+    return res.status(200).json({
+      success: true,
+      data: doctors,
+      count: doctors.length,
+    });
   } catch (error) {
-    if (error instanceof ApiError) {
-      return res
-        .status(error.statusCode)
-        .json(new ApiError(error.statusCode, error.message));
-    }
-    return res
-      .status(500)
-      .json(new ApiError(500, "Error fetching nearby doctors", error.message));
+    // Enhanced error handling
+    const statusCode = error instanceof ApiError ? error.statusCode : 500;
+    const message = error.message || "Error fetching nearby doctors";
+
+    console.error("Error in getDoctorsNearUser:", {
+      message,
+      stack: error.stack,
+      userId: req.user?._id,
+    });
+
+    return res.status(statusCode).json({
+      success: false,
+      error: new ApiError(statusCode, message),
+    });
   }
 };
 

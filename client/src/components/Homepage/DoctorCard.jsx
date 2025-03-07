@@ -24,6 +24,7 @@ const DoctorCards = ({ doctors }) => {
     };
 
     const handleSubmit = async (data) => {
+        
         const res = await bookAppointment({
             ...data,
             doctorId: selectedDoctor
