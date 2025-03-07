@@ -3,6 +3,7 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import Appointment from '../models/appointment.model.js';
 import User from '../models/user.model.js';
 import Doctor from '../models/doctor.model.js';
+import mongoose from "mongoose";
 function generateRoomId(length = 6) {
   const characters =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -21,7 +22,7 @@ const createAppointment = async (req, res) => {
     const id = new mongoose.Types.ObjectId(doctorId);
     // console.log(id);
     const doctor = await User.findById(id);
-    // console.log(doctor);
+    console.log(doctor);
     // Ensure correct model
     if (!doctor) {
       return res.status(400).json(new ApiError(400, "Doctor not found", false));
@@ -72,6 +73,8 @@ const createAppointment = async (req, res) => {
         new ApiResponse(200, appointment, "Appointment created successfully")
       );
   } catch (err) {
+    console.log(err);
+    
     return res.status(500).json(new ApiError(500, "Server Error", err.message));
   }
 };
