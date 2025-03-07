@@ -17,7 +17,7 @@ import axios from "axios";
 import { UserContext } from "../context/UserContext";
 
 // Define the API base URL with a fallback
-const API_BASE_URL ="http://127.0.0.1:8080";
+const API_BASE_URL ="https://drlive-rutu-25.onrender.com";
 
 // Create axios instance with better error handling
 const api = axios.create({
