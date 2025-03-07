@@ -6,7 +6,7 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 const createUser = async (req, res) => {
-  const { firstName, lastName, email, password, role, phone, address, gender,location } =
+  const { firstName, lastName, email, password, role, phone, address, gender } =
     req.body;
 
   // Validate required fields
@@ -18,8 +18,7 @@ const createUser = async (req, res) => {
     !role ||
     !phone ||
     !address ||
-    !gender ||
-    !location
+    !gender
   ) {
     return res
       .status(400)
@@ -49,13 +48,8 @@ const createUser = async (req, res) => {
       phone,
       address,
       gender,
-      geoLocation: {
-        type: "Point",
-        coordinates: location.coordinates
-      }
     });
-     console.log(newUser);
-     
+
     // Save the user to the database
     let user = await newUser.save();
 
@@ -110,7 +104,7 @@ const createUser = async (req, res) => {
           return res
             .status(400)
             .json(
-              new ApiResponse(400, "Please provide all required fields", false)
+              new ApiError(400, "1 Please provide all required fields", false)
             );
         }
 
@@ -123,12 +117,9 @@ const createUser = async (req, res) => {
           userId: user._id,
         });
         let doctor = await newDoctor.save();
-   console.log("hii");
-   
+
         user = { ...user.toObject(), doctor };
       } catch (error) {
-        console.log(error);
-        
         return res
           .status(500)
           .json(new ApiError(500, "server error", error.message));
@@ -220,7 +211,7 @@ const ping = async (req, res) => {
     const details = { ...user.toObject(), ...user_details.toObject() };
 
     res.status(200).json(new ApiResponse(200, details, "User found"));
-  } catch(error) {
+  } catch {
     res.status(500).json(new ApiError(500, "server error", error.message));
   }
 };
