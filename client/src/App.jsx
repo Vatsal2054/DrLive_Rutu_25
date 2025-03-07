@@ -28,6 +28,8 @@ function App() {
             <Route path="/report" element={<Report />} />
             <Route path="/prescriptions" element={<Prescriptions />} />
             <Route path="/profile" element={<Profile />} />
+            <Route path="/AddReport" element={<AddReport />} />
+            <Route path="/GetReports" element={<GetReports />} />
             {/* <Route path="/" /> */}
           </Route>
           <Route path="/meeting/:roomId" element={<MeetingRoom />} />
@@ -35,8 +37,7 @@ function App() {
           <Route path="/signup" element={<SignUp />} />
           <Route path="/signup/patient" element={<PatientSignUp />} />
           <Route path="/signup/doctor" element={<DoctorSignUp />} />
-          <Route path="/addReport" element={<AddReport />} />
-          <Route path="/GetReports" element={<GetReports />} />
+          
         </Routes>
       </BrowserRouter>
     </>
