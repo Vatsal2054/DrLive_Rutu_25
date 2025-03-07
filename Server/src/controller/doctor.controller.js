@@ -182,25 +182,15 @@ const getDoctorsNearUser = async (req, res) => {
         $sort: { distanceInKm: 1 },
       },
     ]);
-    
-    // Debug output
-    console.log(`Found ${doctors.length} doctors, first few distances:`, 
-      doctors.slice(0, 3).map(d => d.distanceInKm));
-    
-    return res.status(200).json(
-      new ApiResponse(
-        200,
-        { 
-          doctors, 
-          totalDoctors: doctors.length, 
-          maxDistance: "3 km",
-          userLocation: currentUser.geoLocation 
-        },
-        `Found ${doctors.length} available doctors within 3 km of your location`
-      )
-    );
-  } catch (error) {
-    console.error("Error in getDoctorsNearUser:", error);
+
+    const response = {
+      doctors,
+      totalDoctors: doctors.length,
+      maxDistance: "10 km",
+    };
+
+    console.log(response);
+
     return res
       .status(error instanceof ApiError ? error.statusCode : 500)
       .json(

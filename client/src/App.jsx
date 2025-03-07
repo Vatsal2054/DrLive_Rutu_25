@@ -13,6 +13,7 @@ import Dashboard from "./pages/Dashboard";
 import Report from "./pages/Report";
 import Prescriptions from "./pages/Prescriptions";
 import PastAppointments from "./pages/PastAppointments";
+import { PharmacyDetailPage, PharmacyPage } from "./pages/PharmacyPage";
 
 function App() {
   return (
@@ -32,6 +33,8 @@ function App() {
           </Route>
           <Route path="/meeting/:roomId" element={<MeetingRoom />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/ph" element={<PharmacyPage />} />
+          <Route path="/ph/:placeId" element={<PharmacyDetailPage />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/signup/patient" element={<PatientSignUp />} />
           <Route path="/signup/doctor" element={<DoctorSignUp />} />
