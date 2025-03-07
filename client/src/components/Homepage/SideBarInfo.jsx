@@ -32,11 +32,17 @@ export const PatientNavContentInfo = [
         fillIcon: <PiPillDuotone />
     },
     {
+        name: "Appointment History",
+        path: "/appointment-history",
+        icon: <PiClockUser />,
+        fillIcon: <PiClockUserDuotone />
+    },
+    {
         name: "Profile",
         path: "/profile",
         icon: <PiUserCircle />,
         fillIcon: <PiUserCircleDuotone />
-    }
+    },
 ]
 
 export const DoctorNavContentInfo = [
@@ -49,6 +55,12 @@ export const DoctorNavContentInfo = [
     {
         name: "Appointments",
         path: "/appointments",
+        icon: <PiClockUser />,
+        fillIcon: <PiClockUserDuotone />
+    },
+    {
+        name: "Appointment History",
+        path: "/appointment-history",
         icon: <PiClockUser />,
         fillIcon: <PiClockUserDuotone />
     },

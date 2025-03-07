@@ -12,6 +12,7 @@ import MeetingRoom from "./pages/MeetingRoom";
 import Dashboard from "./pages/Dashboard";
 import Report from "./pages/Report";
 import Prescriptions from "./pages/Prescriptions";
+import PastAppointments from "./pages/PastAppointments";
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
             <Route path="/report" element={<Report />} />
             <Route path="/prescriptions" element={<Prescriptions />} />
             <Route path="/profile" element={<Profile />} />
+            <Route path="/appointment-history" element={<PastAppointments />} />
             {/* <Route path="/" /> */}
           </Route>
           <Route path="/meeting/:roomId" element={<MeetingRoom />} />

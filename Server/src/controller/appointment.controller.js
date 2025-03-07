@@ -303,21 +303,76 @@ const joinAppointment = async (req, res) => {
       _id: appointmentId,
       type: "online",
     });
+
+    if (!appointment) {
+      return res
+        .status(404)
+        .json(new ApiError(404, "Appointment not found", false));
+    }
+    
     const roomId = appointment.roomId;
     if (!roomId) {
       return res
         .status(400)
         .json(new ApiError(400, "Room ID not found", false));
     }
-    if (!appointment) {
-      return res
-        .status(404)
-        .json(new ApiError(404, "Appointment not found", false));
-    }
+
+    // Update the appointment status to "completed"
+    appointment.status = "completed";
+    await appointment.save();
+    
     return res
       .status(200)
       .json(
         new ApiResponse(200, { roomId }, "Appointment joined successfully")
+      );
+  } catch (err) {
+    return res.status(500).json(new ApiError(500, "Server Error", err.message));
+  }
+};
+
+const getPastAppointments = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    
+    if (!userId) {
+      return res
+        .status(400)
+        .json(new ApiError(400, "User ID is required", false));
+    }
+
+    const user = await User.findOne({ _id: userId });
+    if (!user) {
+      return res
+        .status(404)
+        .json(new ApiError(404, "User not found", false));
+    }
+
+    // Create the query based on whether the user is a doctor or a patient
+    const query = {
+      status: "completed"
+    };
+
+    if (user.role === "doctor") {
+      query.doctorId = userId;
+    } else {
+      query.userId = userId;
+    }
+
+    // Find completed appointments
+    const pastAppointments = await Appointment.find(query)
+      .sort({ date: -1, time: -1 }) // Sort by date and time in descending order
+      .populate("userId", "name email") // Populate user details if needed
+      .populate("doctorId", "name email"); // Populate doctor details if needed
+
+    return res
+      .status(200)
+      .json(
+        new ApiResponse(
+          200, 
+          { appointments: pastAppointments }, 
+          "Past appointments retrieved successfully"
+        )
       );
   } catch (err) {
     return res.status(500).json(new ApiError(500, "Server Error", err.message));
@@ -356,4 +411,5 @@ export {
   declineAppointment,
   joinAppointment,
   getAllPatientAppointments,
+  getPastAppointments,
 };

@@ -31,7 +31,7 @@ const isAppointmentActive = (appointmentDate, appointmentTime) => {
     // Parse appointment date and time
     const appointmentDateTime = new Date(appointmentDate);
     const [hours, minutes] = appointmentTime.split(':').map(Number);
-    appointmentDateTime.setHours(hours, minutes, 0, 0);
+    appointmentDateTime.setHours(hours, minutes === 0 ? 0 : minutes-1, 0, 0);
 
     // Calculate 20 minutes after appointment time
     const endWindow = new Date(appointmentDateTime);
@@ -103,7 +103,8 @@ const AppointmentsPage = () => {
         const res = await getAppointments();
         console.log(res);
         if (res) {
-            setAppointments(res);
+            const appointmentList = res.filter((appointment) => appointment.status === "pending" || appointment.status === "approved");
+            setAppointments(appointmentList);
         }
     }
 
@@ -158,7 +159,7 @@ const AppointmentsPage = () => {
                     return (
                         <Container
                             key={appointment._id}
-                            classes="bg-white dark:bg-gray-800 rounded-2xl shadow-md flex flex-col overflow-hidden"
+                            classes="bg-white dark:bg-gray-800 rounded-2xl shadow-md overflow-hidden"
                         >
                             <div className="p-4 flex-1">
                                 <div className="flex justify-between items-center mb-2">

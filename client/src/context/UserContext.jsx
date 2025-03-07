@@ -20,4 +20,6 @@ export const UserContext = createContext({
     logout: () => {},
     updateAppointmentTime: () => {},
     getDashboardInfo: () => {},
+    getPrescriptions: () => {},
+    getPastAppointments: () => {},
 })

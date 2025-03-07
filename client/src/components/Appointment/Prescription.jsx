@@ -1,11 +1,16 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import Button from "../UI/Buttons";
+import { AutoComplete } from "antd";
+import { UserContext } from "../../context/UserContext";
 
 const Prescription = ({ prescriptions, addPrescription, isDoctor }) => {
     const [medicineName, setMedicineName] = useState("");
     const [quantity, setQuantity] = useState("");
     const [frequency, setFrequency] = useState([]);
     const [timing, setTiming] = useState("Before meal");
+    const [options, setOptions] = useState([]);
+
+    const { getPrescriptions } = useContext(UserContext);
 
     const handleFrequencyChange = (value) => {
         setFrequency(prev =>
@@ -26,6 +31,22 @@ const Prescription = ({ prescriptions, addPrescription, isDoctor }) => {
         }
     };
 
+    async function fetchOptions(value) {
+        if(value === "") return;
+        const res = await getPrescriptions(value);
+        console.log(res);
+        if(res){
+            setOptions([]);
+            const opt = res?.map(obj => {
+                return {
+                    value: obj.name
+                }
+            })
+            console.log(opt);
+            setOptions(opt);
+        }
+    }
+
     return (
         <div className="p-4 h-full border rounded-lg shadow-lg bg-white flex flex-col justify-between">
             <div>
@@ -40,12 +61,23 @@ const Prescription = ({ prescriptions, addPrescription, isDoctor }) => {
             </div>
             {isDoctor && (
                 <form onSubmit={handleSubmit} className="space-y-2">
-                    <input
+                    {/* <input
                         type="text"
                         placeholder="Medicine Name"
                         value={medicineName}
                         onChange={(e) => setMedicineName(e.target.value)}
                         className="border p-2 rounded w-full"
+                    /> */}
+                    <AutoComplete 
+                        value={medicineName}
+                        placeholder={"Medicine Name"}
+                        className="w-full p-[-12px]"
+                        options={options}
+                        onSelect={(value) => setMedicineName(value)}
+                        onChange={(text) => setMedicineName(text)}
+                        onSearch={(text) => {
+                            fetchOptions(text)
+                        }}
                     />
                     <input
                         type="number"
