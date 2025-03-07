@@ -29,12 +29,12 @@ function App() {
             <Route path="/prescriptions" element={<Prescriptions />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/appointment-history" element={<PastAppointments />} />
+            <Route path="/pharmacy-near-me" element={<PharmacyPage />} />
+            <Route path="/pharmacy-near-me/:placeId" element={<PharmacyDetailPage />} />
             {/* <Route path="/" /> */}
           </Route>
           <Route path="/meeting/:roomId" element={<MeetingRoom />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/ph" element={<PharmacyPage />} />
-          <Route path="/ph/:placeId" element={<PharmacyDetailPage />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/signup/patient" element={<PatientSignUp />} />
           <Route path="/signup/doctor" element={<DoctorSignUp />} />

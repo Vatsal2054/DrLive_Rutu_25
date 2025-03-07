@@ -110,7 +110,9 @@ const PharmacyPage = () => {
       );
       
       if (data.success && data.results) {
-        setPharmacies(data.results);
+        console.log(data.results);
+        const filteredPharmacies = data.results.filter(pharmacy => pharmacy.business_status !== "CLOSED_TEMPORARILY");
+        setPharmacies(filteredPharmacies);
       } else {
         setError("Failed to fetch pharmacy data");
         toast.error("Could not load pharmacy data");
@@ -132,11 +134,11 @@ const PharmacyPage = () => {
 
   const getStatusColor = (status, isOpen) => {
     if (status === "OPERATIONAL" && isOpen) {
-      return "text-green-500";
+      return "bg-emerald-500";
     } else if (status === "CLOSED_TEMPORARILY") {
-      return "text-orange-500";
+      return "bg-red-400";
     } else {
-      return "text-red-500";
+      return "bg-orange-500";
     }
   };
 
@@ -162,7 +164,7 @@ const PharmacyPage = () => {
     try {
       const data = await pharmacyService.getPharmacyDetails(placeId);
       if (data.success && data.result) {
-        navigate(`/pharmacy/${placeId}`, { state: { pharmacy: data.result } });
+        navigate(`/pharmacy-near-me/${placeId}`, { state: { pharmacy: data.result } });
       } else {
         toast.error("Could not load pharmacy details");
       }
@@ -188,7 +190,7 @@ const PharmacyPage = () => {
           <div className="font-medium">{error}</div>
         </div>
         <Button type="PRIMARY" onClick={fetchPharmacies}>
-          <RefreshCw className="w-4 h-4 mr-2" />
+          <RefreshCw className="w-4 h-4 inline-block mt-[-2px] mr-2" />
           Try Again
         </Button>
       </div>
@@ -197,8 +199,8 @@ const PharmacyPage = () => {
 
   return (
     <div className="p-6 max-w-7xl mx-auto">
-      <div className="flex justify-between items-center mb-8">
-        <div>
+      <div className="flex flex-row mb-8">
+        <div className="flex-1">
           <h1 className="text-2xl md:text-3xl font-bold text-gray-800 dark:text-white">Nearby Pharmacies</h1>
           <p className="text-gray-500 mt-1">Finding healthcare services near you</p>
         </div>
@@ -206,15 +208,16 @@ const PharmacyPage = () => {
           type="SECONDARY" 
           onClick={() => fetchPharmacies()}
           disabled={loading}
+          extraClasses={"!w-auto"}
         >
           {loading ? (
             <>
-              <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
+              <RefreshCw className="w-4 h-4 inline-block mt-[-2px] mr-2 animate-spin" />
               Refreshing...
             </>
           ) : (
             <>
-              <RefreshCw className="w-4 h-4 mr-2" />
+              <RefreshCw className="w-4 h-4 inline-block mt-[-2px] mr-2" />
               Refresh
             </>
           )}
@@ -248,10 +251,10 @@ const PharmacyPage = () => {
                 <div className="flex justify-between items-start mb-3">
                   <h2 className="text-lg font-semibold text-gray-800 dark:text-white">{pharmacy.name}</h2>
                   <span
-                    className={`text-xs px-2 py-1 rounded-full ${getStatusColor(
+                    className={`text-xs text-white px-2 py-1 rounded-full ${getStatusColor(
                       pharmacy.business_status,
                       pharmacy.opening_hours?.open_now
-                    )} bg-opacity-10 bg-current font-medium`}
+                    )} bg-current font-medium text-nowrap`}
                   >
                     {getStatusText(pharmacy.business_status, pharmacy.opening_hours?.open_now)}
                   </span>
@@ -261,8 +264,8 @@ const PharmacyPage = () => {
                   {pharmacy.types[0].replace(/_/g, " ").charAt(0).toUpperCase() + 
                    pharmacy.types[0].replace(/_/g, " ").slice(1)}
                   {pharmacy.rating > 0 && (
-                    <span className={`ml-2 ${getRatingColor(pharmacy.rating)} flex items-center`}>
-                      <Star className="w-4 h-4 mr-1 fill-current" /> 
+                    <span className={`ml-2 ${getRatingColor(pharmacy.rating)} flex items-center text-yellow-400`}>
+                      <Star className="w-4 h-4 inline-block mt-[-2px] mr-1  fill-yellow-400" /> 
                       {pharmacy.rating.toFixed(1)}
                       <span className="text-gray-500 ml-1">({pharmacy.user_ratings_total})</span>
                     </span>
@@ -271,12 +274,12 @@ const PharmacyPage = () => {
 
                 <div className="space-y-3 text-sm">
                   <div className="flex items-start gap-3 text-gray-600 dark:text-gray-300">
-                    <MapPin className="w-4 h-4 mt-1 flex-shrink-0 text-gray-500" />
+                    <MapPin className="w-4 h-4 inline-block mt-[-2px] mt-1 flex-shrink-0 text-gray-500" />
                     <span className="line-clamp-2">{pharmacy.vicinity}</span>
                   </div>
                   
                   <div className="flex items-center gap-3 text-gray-600 dark:text-gray-300">
-                    <Clock className="w-4 h-4 flex-shrink-0 text-gray-500" />
+                    <Clock className="w-4 h-4 inline-block mt-[-2px] flex-shrink-0 text-gray-500" />
                     <span>
                       {pharmacy.business_status === "OPERATIONAL" 
                         ? (pharmacy.opening_hours?.open_now ? "Currently Open" : "Currently Closed") 
@@ -296,14 +299,14 @@ const PharmacyPage = () => {
                   )}
                   disabled={pharmacy.business_status !== "OPERATIONAL"}
                 >
-                  <Navigation className="w-4 h-4 mr-2" />
+                  <Navigation className="w-4 h-4 inline-block mt-[-2px] mr-2" />
                   Directions
                 </Button>
                 <Button
                   type="SECONDARY"
                   onClick={() => handleViewDetails(pharmacy.place_id)}
                 >
-                  <Info className="w-4 h-4 mr-2" />
+                  <Info className="w-4 h-4 inline-block mt-[-2px] mr-2" />
                   Details
                 </Button>
               </div>
@@ -400,14 +403,14 @@ const PharmacyDetailPage = () => {
       <div className="bg-blue-50 dark:bg-blue-900 dark:bg-opacity-20 p-6">
         <Button 
           type="SECONDARY" 
-          onClick={() => navigate("/pharmacies")} 
-          extraClasses="mb-4"
+          onClick={() => navigate("/pharmacies-near-me")} 
+          extraClasses="mb-4 !w-auto"
         >
           &larr; Back to Pharmacies
         </Button>
         
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div>
+        <div className="flex gap-4">
+          <div className="flex flex-col flex-1">
             <h1 className="text-2xl md:text-3xl font-bold text-gray-800 dark:text-white mb-2">
               {pharmacy.name}
             </h1>
@@ -423,7 +426,7 @@ const PharmacyDetailPage = () => {
                     {Array.from({ length: 5 }).map((_, i) => (
                       <Star 
                         key={i} 
-                        className={`w-4 h-4 ${i < Math.round(pharmacy.rating) ? 'text-yellow-500 fill-current' : 'text-gray-300'}`}
+                        className={`w-4 h-4 inline-block mt-[-2px] ${i < Math.round(pharmacy.rating) ? 'text-yellow-500 fill-current' : 'text-gray-300'}`}
                       />
                     ))}
                   </div>
@@ -443,8 +446,9 @@ const PharmacyDetailPage = () => {
               pharmacy.geometry.location.lng,
               pharmacy.place_id
             )}
+            extraClasses={"!w-auto !p-4 !py-4"}
           >
-            <Navigation className="w-4 h-4 mr-2" />
+            <Navigation className="w-4 h-4 inline-block mt-[-2px] mr-2" />
             Get Directions
           </Button>
         </div>
@@ -541,11 +545,11 @@ const PharmacyDetailPage = () => {
                   className={`${index < pharmacy.reviews.length - 1 ? 'border-b border-gray-200 dark:border-gray-600 pb-4' : ''}`}
                 >
                   <div className="flex items-center mb-3">
-                    <img 
+                    {/* <img 
                       src={review.profile_photo_url || "/api/placeholder/36/36"} 
                       alt={review.author_name} 
                       className="w-9 h-9 rounded-full mr-3"
-                    />
+                    /> */}
                     <div>
                       <p className="font-medium text-gray-800 dark:text-gray-200">{review.author_name}</p>
                       <div className="flex items-center">
@@ -553,7 +557,7 @@ const PharmacyDetailPage = () => {
                           {Array.from({ length: 5 }).map((_, i) => (
                             <Star 
                               key={i} 
-                              className={`w-4 h-4 ${i < review.rating ? 'text-yellow-500 fill-current' : 'text-gray-300'}`}
+                              className={`w-4 h-4 inline-block mt-[-2px] ${i < review.rating ? 'text-yellow-500 fill-current' : 'text-gray-300'}`}
                             />
                           ))}
                         </div>
@@ -573,10 +577,10 @@ const PharmacyDetailPage = () => {
                     href={pharmacy.url} 
                     target="_blank" 
                     rel="noopener noreferrer"
-                    className="text-blue-600 hover:underline inline-flex items-center"
+                    className="text-blue-600 hover:underline inline-flex items-center cursor-pointer"
                   >
                     View all {pharmacy.reviews.length} reviews on Google
-                    <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-4 h-4 inline-block mt-[-2px] ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                     </svg>
                   </a>

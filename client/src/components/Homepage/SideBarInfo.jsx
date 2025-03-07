@@ -1,4 +1,4 @@
-import { PiChats, PiScanDuotone , PiClipboardText, PiClipboardTextDuotone, PiGearSix, PiGearSixDuotone, PiHouse, PiHouseDuotone, PiMagnifyingGlass, PiMagnifyingGlassDuotone, PiUserCircle, PiUserCircleDuotone, PiScan, PiPill, PiPillDuotone, PiClockUser, PiClockUserDuotone } from "react-icons/pi";
+import { PiChats, PiScanDuotone , PiClipboardText, PiClipboardTextDuotone, PiGearSix, PiGearSixDuotone, PiHouse, PiHouseDuotone, PiMagnifyingGlass, PiMagnifyingGlassDuotone, PiUserCircle, PiUserCircleDuotone, PiScan, PiPill, PiPillDuotone, PiClockUser, PiClockUserDuotone, PiStorefront, PiStorefrontDuotone } from "react-icons/pi";
 
 export const PatientNavContentInfo = [
     {
@@ -30,6 +30,12 @@ export const PatientNavContentInfo = [
         path: "/prescriptions",
         icon: <PiPill />,
         fillIcon: <PiPillDuotone />
+    },
+    {
+        name: "Pharmacy Near Me",
+        path: "/pharmacy-near-me",
+        icon: <PiStorefront />,
+        fillIcon: <PiStorefrontDuotone />
     },
     {
         name: "Appointment History",
