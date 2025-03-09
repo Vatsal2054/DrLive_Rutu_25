@@ -10,6 +10,7 @@ import {
   declineAppointment,
   joinAppointment,
   getAllPatientAppointments,
+  getPastAppointments
 } from "../controller/appointment.controller.js";
 
 const router = Router();
@@ -23,5 +24,6 @@ router.put("/approve/:id", isAuthenticated, isDoctor, approveAppointment);
 router.put("/decline/:id", isAuthenticated, isDoctor, declineAppointment);
 // router.get("/:id", isAuthenticated, getAppointmentById);
 router.get("/join/:id", isAuthenticated, joinAppointment);
+router.get("/pastAppointments", isAuthenticated, getPastAppointments);
 
 export default router;

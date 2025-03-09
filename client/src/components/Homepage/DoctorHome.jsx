@@ -40,12 +40,6 @@ export default function DoctorHome() {
     }
   }
 
-  const appointments = [
-    { time: "09:00 AM", patient: "John Doe", status: "Confirmed" },
-    { time: "10:30 AM", patient: "Jane Smith", status: "Pending" },
-    { time: "02:00 PM", patient: "Robert Johnson", status: "Confirmed" },
-  ];
-
   const statCards = [
     {
       title: dashboardInfo.stats[0].title,
@@ -166,13 +160,13 @@ export default function DoctorHome() {
                   </div>
                 </div>
                 <div
-                  className={`px-4 py-2 rounded-full text-sm font-medium ${
+                  className={`px-4 py-2 rounded-full text-[.85rem] font-medium ${
                     apt.status === "approved"
                       ? "bg-green text-emerald-100 dark:bg-green-800 dark:text-green-100"
                       : "bg-yellow-100 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-100"
                   }`}
                 >
-                  {apt.status}
+                  {apt.status.toUpperCase()}
                 </div>
               </div>
             ))

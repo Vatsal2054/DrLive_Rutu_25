@@ -4,6 +4,8 @@ import getApi from "../helpers/API/getApi";
 import postApi from "../helpers/API/postApi";
 import putApi from "../helpers/API/putApi";
 import toast from "react-hot-toast";
+import axios from "axios";
+import { getPastAppointments } from "../../../Server/src/controller/appointment.controller";
 
 export default function UserContextProvider({ children }) {
     const [userInfo, setUserInfo] = useState({});
@@ -126,6 +128,18 @@ export default function UserContextProvider({ children }) {
         return false;
     }
 
+    async function handleGetPrescriptions(text){
+        const res = await axios.get(`https://medicine-eekv.onrender.com/medicines/suggest/${text}`, {
+            withCredentials: false,
+        } );
+        console.log(res);
+        if(res.status === 200){
+            console.log("Prescriptions fetched successfully");
+            return res.data.suggestions;
+        }
+        return false;
+    }
+
     async function handleSubmitPrescriptions(data){
         const res = await postApi("/prescription/", data);
         console.log(res);
@@ -172,6 +186,16 @@ export default function UserContextProvider({ children }) {
         }
         return false
     }
+    
+    async function handleGetPastAppointments(){
+        const res = await getApi("/appointment/pastAppointments");
+        console.log(res);
+        if(res.status === 200){
+            console.log("Dashboard info fetched successfully");
+            return res.data.data.appointments;
+        }
+        return false
+    }
 
     const ctxValue = {
         userInfo: userInfo,
@@ -192,7 +216,9 @@ export default function UserContextProvider({ children }) {
         submitPrescriptions: handleSubmitPrescriptions,
         logout: handleLogout,
         updateAppointmentTime: handleUpdateAppointmentTime,
-        getDashboardInfo: handleGetDashboardInfo
+        getDashboardInfo: handleGetDashboardInfo,
+        getPrescriptions: handleGetPrescriptions,
+        getPastAppointments: handleGetPastAppointments,
     }
 
     return (

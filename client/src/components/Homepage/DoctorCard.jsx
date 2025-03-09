@@ -38,7 +38,7 @@ const DoctorCards = ({ doctors }) => {
     return (
         <>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {doctors.map((doctor) => (
+                {doctors?.map((doctor) => (
                     <Container 
                         key={doctor._id} 
                         classes="p-6 hover:shadow-lg transition-shadow duration-200"

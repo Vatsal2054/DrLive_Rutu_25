@@ -4,15 +4,15 @@ import Input from "../UI/Inputs";
 import { AuthContext } from "../../context/AuthContext";
 import { Link, useNavigate } from "react-router";
 import { Logo } from "../UI/Logo";
+import { Eye, EyeOff, ArrowRight, Mail, Lock } from "lucide-react";
 
 export default function LoginContent() {
     const [error, setError] = useState({
         field: "",
         message: ""
     });
-
+    const [showPassword, setShowPassword] = useState(false);
     const { credentials, setCredentials, loginUser } = useContext(AuthContext);
-
     const navigate = useNavigate();
 
     function handleChange(e) {
@@ -22,21 +22,19 @@ export default function LoginContent() {
             setError({
                 field: name,
                 message: "Spaces are not allowed!"
-            })
+            });
             return;
         } else {
             setError({
                 field: "",
                 message: ""
-            })
+            });
         }
 
-        setCredentials(prevValue => {
-            return {
-                ...prevValue,
-                [name]: value
-            }
-        })
+        setCredentials(prevValue => ({
+            ...prevValue,
+            [name]: value
+        }));
     }
 
     function checkEmptyFields() {
@@ -60,70 +58,84 @@ export default function LoginContent() {
         if (res) navigate("/");
     }
 
+    const togglePasswordVisibility = () => {
+        setShowPassword(!showPassword);
+    };
 
     return (
-        <main>
-            <div className="w-[100vw] h-[100vh] p-8 flex flex-row">
-                <section className="flex-[4] flex justify-center items-center">
-                    <div className="w-[30%] flex flex-col">
-                        <Logo size={50} className="pb-3" />
-                        <h1 className="text-[2.6rem] mb-4 font-medium stretched flex justify-between items-center">
-                            <span>
-                                <span className="font-light">Login to </span>
-                                Dr. Live
-                            </span>
+        <main className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-gray-900 dark:to-gray-800 min-h-screen">
+            <div className="min-h-screen flex items-center justify-center p-6">
+                <div className="w-full max-w-md">
+                    <div className="bg-white dark:bg-gray-800 shadow-xl rounded-2xl p-8 border border-gray-100 dark:border-gray-700">
+                        <div className="flex justify-center mb-6">
+                            <Logo size={60} className="text-primary" />
+                        </div>
+
+                        <h1 className="text-3xl font-bold text-center mb-2 text-gray-800 dark:text-white">
+                            Welcome Back
                         </h1>
-                        <form onSubmit={(e) => e.preventDefault()} className="">
-                            <Input
-                                Type={"PRIMARY"}
-                                labelText={"Email"}
-                                type={"email"}
-                                name={"email"}
-                                value={credentials.email}
-                                onChange={handleChange}
-                                errorText={error.field === "email" ? error.message : ""}
-                            // extraClasses={"mb-2"}
-                            />
-                            <Input
-                                Type={"PRIMARY"}
-                                labelText={"Password"}
-                                type={"password"}
-                                name={"password"}
-                                value={credentials.password}
-                                onChange={handleChange}
-                                errorText={error.field === "password" ? error.message : ""}
-                                extraClasses={"mb-2"}
-                            />
-                            <div className="w-full mb-4 flex items-center">
-                                <a href="#" className="text-sm pr-2 text-font-grey dark:text-font-darkGrey hover:text-primary dark:hover:text-primary">Forgot password?</a>
-                                {/* <div className="flex-1 h-[1px] bg-background-greyDark"></div> */}
+                        <p className="text-center text-gray-500 dark:text-gray-400 mb-8">
+                            Login to your Dr. Live account
+                        </p>
+
+                        <form onSubmit={(e) => e.preventDefault()} className="space-y-4">
+                            <div className="relative">
+                                <Input
+                                    Type={"PRIMARY"}
+                                    labelText={"Email"}
+                                    type={"email"}
+                                    name={"email"}
+                                    value={credentials.email}
+                                    onChange={handleChange}
+                                    errorText={error.field === "email" ? error.message : ""}
+                                />
                             </div>
+
+                            <div className="relative">
+                                <Input
+                                    Type={"PRIMARY"}
+                                    labelText={"Password"}
+                                    type={showPassword ? "text" : "password"}
+                                    name={"password"}
+                                    value={credentials.password}
+                                    onChange={handleChange}
+                                    errorText={error.field === "password" ? error.message : ""}
+                                />
+                            </div>
+
+                            <div className="flex justify-end">
+                                <a href="#" className="text-sm text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 transition">
+                                    Forgot password?
+                                </a>
+                            </div>
+
                             <Button
                                 type={"MAIN"}
                                 onClick={handleSubmit}
-                                // disabled={!credentials.email || !credentials.password}
-                                extraClasses={"mb-4"}
+                                extraClasses="w-full py-3 flex items-center justify-center gap-2 rounded-xl transition-all duration-300 hover:shadow-lg"
                             >
-                                Login
+                                Login <ArrowRight className="inline-block w-4 h-4 mt-[-2px]" />
                             </Button>
-                            {/* <div className="w-full mb-4 flex items-center">
-                                <div className="text-sm pr-2 dark:text-font-darkGrey text-font-grey">Or continue with</div>
-                                <div className="flex-1 h-[1px] dark:bg-font-darkGrey bg-font-grey"></div>
+
+                            <div className="relative flex items-center gap-3 py-2">
+                                <div className="flex-grow h-px bg-gray-200 dark:bg-gray-700"></div>
+                                <span className="text-sm text-gray-400">or</span>
+                                <div className="flex-grow h-px bg-gray-200 dark:bg-gray-700"></div>
                             </div>
-                            <Button
-                                type={"TERTIARY"}
-                                onClick={handleGoogleLogin}
-                                extraClasses={"mb-4"}
-                            >
-                                <FcGoogle className="inline-block text-xl mb-[2px]" /> Sign in using Google
-                            </Button> */}
-                            <div className="pt-2 text-[15px] text-center text-font-grey dark:text-font-darkGrey">
-                                Don&apos;t have an account? <Link to={"/signup"} className="text-font-dark dark:text-font-light hover:text-primary dark:hover:text-primary">Sign up</Link>
+
+                            <div className="text-sm text-center text-gray-500 dark:text-gray-400">
+                                Don't have an account?{" "}
+                                <Link
+                                    to={"/signup"}
+                                    className="font-medium text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 transition"
+                                >
+                                    Sign up
+                                </Link>
                             </div>
                         </form>
                     </div>
-                </section>
+                </div>
             </div>
         </main>
-    )
+    );
 }

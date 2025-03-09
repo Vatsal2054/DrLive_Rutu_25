@@ -525,9 +525,9 @@ const MedicalChatModal = () => {
           </div>
         </div>
         {selectedDoctor === doctor.doctorId && (
-          <div className="mt-2 text-center">
+          <div className="mt-2">
             <button
-              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-1.5 rounded-md text-sm font-medium transition-colors duration-200"
+              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-1.5 rounded-md text-sm font-medium transition-colors duration-200 flex justify-center items-center w-full"
               onClick={(e) => {
                 e.stopPropagation();
                 setModalOpen(true);
@@ -558,12 +558,12 @@ const MedicalChatModal = () => {
     <>
       {/* Main Chat Modal */}
       <div
-        className={`fixed bottom-4 right-4 w-96 sm:w-96 rounded-xl bg-white shadow-xl transition-all duration-300 z-50 flex flex-col ${
+        className={`fixed bottom-4 right-4 md:w-[30rem] sm:w-96 rounded-xl bg-white shadow-xl transition-all duration-300 z-50 flex flex-col ${
           chatOpen
-            ? "h-96 sm:h-[550px] opacity-100"
+            ? "h-[100vh] opacity-100"
             : "h-0 opacity-0 pointer-events-none"
         }`}
-        style={{ maxHeight: "80vh" }}
+        style={{ maxHeight: "90vh" }}
       >
         {/* Header */}
         <div className="flex items-center justify-between px-4 py-3 bg-blue-600 text-white rounded-t-xl">

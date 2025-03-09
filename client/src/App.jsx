@@ -12,6 +12,8 @@ import MeetingRoom from "./pages/MeetingRoom";
 import Dashboard from "./pages/Dashboard";
 import Report from "./pages/Report";
 import Prescriptions from "./pages/Prescriptions";
+import PastAppointments from "./pages/PastAppointments";
+import { PharmacyDetailPage, PharmacyPage } from "./pages/PharmacyPage";
 import AddReport from "./pages/AddReports";
 import GetReports from "./pages/GetReports";
 
@@ -28,7 +30,10 @@ function App() {
             <Route path="/report" element={<Report />} />
             <Route path="/prescriptions" element={<Prescriptions />} />
             <Route path="/profile" element={<Profile />} />
-            <Route path="/AddReport" element={<AddReport />} />
+            <Route path="/appointment-history" element={<PastAppointments />} />
+            <Route path="/pharmacy-near-me" element={<PharmacyPage />} />
+            <Route path="/pharmacy-near-me/:placeId" element={<PharmacyDetailPage />} />
+            <Route path="/upload-report" element={<AddReport />} />
             <Route path="/GetReports" element={<GetReports />} />
             {/* <Route path="/" /> */}
           </Route>
