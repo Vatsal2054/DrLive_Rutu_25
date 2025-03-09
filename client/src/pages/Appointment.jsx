@@ -81,7 +81,7 @@ const getTimeUntilAppointment = (appointmentDate, appointmentTime) => {
 const AppointmentsPage = () => {
     const [appointments, setAppointments] = useState([]);
     const [isOpen, setIsOpen] = useState(false);
-    const [selectedAppointment, setSelectedAppointment] = useState(null);
+    const [selectedAppointment, setSelectedAppointment] = useState({});
     const [currentTime, setCurrentTime] = useState(new Date());
 
     const { role, getAppointments, acceptRequest, declineRequest, joinAppointment, setAppointment, updateAppointmentTime } = useContext(UserContext);
@@ -235,6 +235,7 @@ const AppointmentsPage = () => {
                                         type="PRIMARY"
                                         extraClasses="flex-1"
                                         onClick={() => {
+                                            console.log(appointment);
                                             setSelectedAppointment(appointment);
                                             setIsOpen(true);
                                         }}
@@ -303,6 +304,7 @@ const AppointmentsPage = () => {
                 isOpen={isOpen}
                 onClose={() => setIsOpen(false)}
                 onSubmit={handleTimeUpdate}
+                date={selectedAppointment.date}
             />
         </div>
     );

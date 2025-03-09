@@ -10,7 +10,7 @@ const DoctorCards = ({ doctors }) => {
     const [selectedDoctor, setSelectedDoctor] = useState(null);
     const { bookAppointment } = useContext(UserContext);
 
-    if (!doctors?.length) {
+    if (doctors.length === 0) {
         return (
             <div className="text-center py-8 text-gray-500 text-sm">
                 No doctors found

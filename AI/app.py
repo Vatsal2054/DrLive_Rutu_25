@@ -106,7 +106,7 @@ except Exception as e:
 class MedicalSystem:
     SPECIALIZATIONS = {
         "Cardiologist": {
-            "keywords": ["heart", "chest", "blood pressure"],
+            "keywords": ["heart", "chest", "blood pressure", "lungs"],
             "description": "Heart and cardiovascular system specialist"
         },
         "Dermatologist": {
@@ -122,7 +122,7 @@ class MedicalSystem:
             "description": "Brain, spinal cord, and nervous system specialist"
         },
         "Orthopaedic": {
-            "keywords": ["bone", "joint", "muscle", "fracture"],
+            "keywords": ["bone", "joint", "muscle", "fracture", "broken", "sprain", "strain"],
             "description": "Bone and joint specialist"
         },
         "Psychiatrist": {
