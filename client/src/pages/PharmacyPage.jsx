@@ -391,7 +391,7 @@ const PharmacyDetailPage = () => {
           <Info className="w-6 h-6 mx-auto mb-2" />
           <div className="font-medium">Pharmacy information not found</div>
         </div>
-        <Button type="PRIMARY" onClick={() => navigate("/pharmacies")}>
+        <Button type="PRIMARY" onClick={() => navigate("/pharmacy-near-me")}>
           Back to Pharmacies
         </Button>
       </div>
@@ -403,7 +403,7 @@ const PharmacyDetailPage = () => {
       <div className="bg-blue-50 dark:bg-blue-900 dark:bg-opacity-20 p-6">
         <Button 
           type="SECONDARY" 
-          onClick={() => navigate("/pharmacies-near-me")} 
+          onClick={() => navigate("/pharmacy-near-me")} 
           extraClasses="mb-4 !w-auto"
         >
           &larr; Back to Pharmacies

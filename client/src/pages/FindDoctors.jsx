@@ -23,7 +23,9 @@ export default function FindDoctors() {
         res = await getDoctorsByCity();
         console.log(res);
         if (res) {
-            setDoctorsInCity(res.doctors);
+            setDoctorsInCity(res);
+            console.log("2",doctorsInCity);
+            
         }
     }
 

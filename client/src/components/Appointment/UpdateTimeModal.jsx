@@ -3,9 +3,10 @@ import { useState, useEffect } from 'react';
 import Button from '../UI/Buttons';
 import Input from '../UI/Inputs';
 
-const UpdateTimeModal = ({ isOpen, onClose, onSubmit }) => {
+const UpdateTimeModal = ({ isOpen, onClose, onSubmit, date }) => {
+    
     const [formData, setFormData] = useState({
-        date: '',
+        date: date ? new Date(date) : '',
         time: ''
     });
 

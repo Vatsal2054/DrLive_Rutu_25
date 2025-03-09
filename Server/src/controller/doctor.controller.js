@@ -158,6 +158,7 @@ const getDoctorsNearUser = async (req, res) => {
           phone: 1,
           avatar: 1,
           address: 1,
+          isAvailable: "$doctorInfo.isAvailable",
           distanceInKm: { $round: ["$distance", 2] },
           specialization: "$doctorInfo.specialization",
           experience: "$doctorInfo.experience",
